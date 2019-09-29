@@ -1,0 +1,18 @@
+package ru.v1as.tg.autopoller;
+
+import com.google.common.collect.ImmutableSet;
+import com.vdurmont.emoji.Emoji;
+import com.vdurmont.emoji.EmojiManager;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+public class Const {
+
+    private static final Set<String> EMOJIS =
+            EmojiManager.getAll().stream().map(Emoji::getUnicode).collect(Collectors.toSet());
+    private static final Set<String> ALLOWED_REPLY = ImmutableSet.of("+", "-", "~");
+
+    public static boolean isReaction(String text) {
+        return EMOJIS.contains(text) || ALLOWED_REPLY.contains(text);
+    }
+}
