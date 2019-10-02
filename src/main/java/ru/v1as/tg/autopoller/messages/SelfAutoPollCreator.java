@@ -28,6 +28,9 @@ public class SelfAutoPollCreator implements MessageHandler {
     public void handle(Message msg, Chat chat, User user) {
         UserData userData = data.getUserData(user);
         AutoPollChatData chatData = data.getChatData(chat.getId());
+        if (chatData.isUserDisabled(user)) {
+            return;
+        }
         Message lastMessage = chatData.getLastMessage();
         String msgTxt = msg.getText();
         Integer lastMessageUserId =
@@ -42,7 +45,7 @@ public class SelfAutoPollCreator implements MessageHandler {
             SendMessage sendMsg =
                     new SendMessage()
                             .setText(
-                                    userData.getUsernameOrFullName()
+                                    userData.getUsernameAndFullName()
                                             + ": \n"
                                             + lastMessage.getText())
                             .setChatId(chat.getId())

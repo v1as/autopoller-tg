@@ -27,6 +27,9 @@ public class PollReplyHandler implements MessageHandler {
     @Override
     public void handle(Message message, Chat chat, User user) {
         AutoPollChatData chatData = data.getChatData(chat.getId());
+        if (chatData.isUserDisabled(user)) {
+            return;
+        }
         Integer replyToMsgId =
                 ofNullable(message.getReplyToMessage()).map(Message::getMessageId).orElse(null);
         AutoPoll poll = chatData.getMsgIdToPoll().get(replyToMsgId);

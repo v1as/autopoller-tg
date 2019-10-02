@@ -16,7 +16,7 @@ import ru.v1as.tg.autopoller.messages.TgMessageProcessor;
 
 @Getter
 @Component
-class AutoPoller extends AbstractGameBot {
+class AutoPoller extends AbstractTgBot {
 
     private final AutoPollBotData data;
     private final TgCallbackProcessor callbackProcessor;
@@ -55,13 +55,4 @@ class AutoPoller extends AbstractGameBot {
         messageProcessor.process(message, chat, user);
     }
 
-    @Override
-    public String getBotUsername() {
-        return "AutoPoller";
-    }
-
-    @Override
-    public String getBotToken() {
-        return "";
-    }
 }

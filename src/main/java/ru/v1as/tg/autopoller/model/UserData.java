@@ -38,4 +38,8 @@ public class UserData {
             return "@" + userName;
         }
     }
+
+    public String getUsernameAndFullName() {
+        return isEmpty(userName) ? fullName : "@" + userName + " (" + fullName + ")";
+    }
 }

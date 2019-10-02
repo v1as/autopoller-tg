@@ -26,6 +26,9 @@ public class OtherOneReactionMessageHandler implements MessageHandler {
     @Override
     public void handle(Message msg, Chat chat, User user) {
         AutoPollChatData chatData = data.getChatData(chat.getId());
+        if (chatData.isUserDisabled(user)) {
+            return;
+        }
         Message lastMessage = chatData.getLastMessage();
         String msgTxt = msg.getText();
         Integer replyToMsgId =
@@ -39,7 +42,7 @@ public class OtherOneReactionMessageHandler implements MessageHandler {
             AutoPoll poll = new AutoPoll(chatData, user.getId(), msgTxt);
             SendMessage sendMsg =
                     new SendMessage()
-                            .setText("Reactions")
+                            .setText("\uD83D\uDCAD")
                             .setChatId(chat.getId())
                             .setReplyToMessageId(lastMessage.getMessageId())
                             .setReplyMarkup(poll.getReplyKeyboard());

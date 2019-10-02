@@ -27,7 +27,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 public class AbstractGameBotTest extends AbstractTelegramTest {
 
     @Autowired protected TestAbsSender sender;
-    @Autowired protected AbstractGameBot bot;
+    @Autowired protected AbstractTgBot bot;
 
     @Before
     public void before() {

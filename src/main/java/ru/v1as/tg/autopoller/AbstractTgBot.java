@@ -9,8 +9,10 @@ import java.io.Serializable;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.annotation.PostConstruct;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -23,12 +25,26 @@ import org.telegram.telegrambots.meta.updateshandlers.SentCallback;
 import ru.v1as.tg.autopoller.commands.TgCommandRequest;
 import ru.v1as.tg.autopoller.tg.UnsafeAbsSender;
 
-public abstract class AbstractGameBot extends TelegramLongPollingBot implements UnsafeAbsSender {
+public abstract class AbstractTgBot extends TelegramLongPollingBot implements UnsafeAbsSender {
 
     private final Logger log = getLogger(this.getClass());
 
     private AbsSender sender = this;
     private Map<Long, Object> chatToMonitor = new ConcurrentHashMap<>();
+
+    @Value("${tg.bot.username}")
+    private String botUsername;
+
+    @Value("${tg.bot.token}")
+    private String botToken;
+
+    @PostConstruct
+    public void init() {
+        log.info(
+                "Bean '{}' with username '{}' starting",
+                this.getClass().getSimpleName(),
+                botUsername);
+    }
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -41,9 +57,6 @@ public abstract class AbstractGameBot extends TelegramLongPollingBot implements 
             }
             synchronized (chatToMonitor.computeIfAbsent(chat.getId(), (id) -> chat.getId())) {
                 before(update);
-                if (!chat.isGroupChat() && !chat.isSuperGroupChat()) {
-                    return;
-                }
                 if (update.hasMessage() && update.getMessage().isCommand()) {
                     String text = update.getMessage().getText();
                     log.info("Command '{}' received.", text);
@@ -98,5 +111,15 @@ public abstract class AbstractGameBot extends TelegramLongPollingBot implements 
 
     public void setSender(AbsSender sender) {
         this.sender = sender;
+    }
+
+    @Override
+    public String getBotUsername() {
+        return botUsername;
+    }
+
+    @Override
+    public String getBotToken() {
+        return botToken;
     }
 }

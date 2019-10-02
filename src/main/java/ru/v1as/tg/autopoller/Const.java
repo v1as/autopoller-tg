@@ -13,6 +13,10 @@ public class Const {
     private static final Set<String> ALLOWED_REPLY = ImmutableSet.of("+", "-", "~");
 
     public static boolean isReaction(String text) {
-        return EMOJIS.contains(text) || ALLOWED_REPLY.contains(text);
+        return EMOJIS.contains(text) || ALLOWED_REPLY.contains(text) || isEmojiAlpha(text);
+    }
+
+    private static boolean isEmojiAlpha(String text) {
+        return text.length() < 5 && text.chars().allMatch(c -> c > 1000);
     }
 }

@@ -42,6 +42,8 @@ public class WhoCommandHandler implements CommandHandler {
         }
         if (autoPoll != null) {
             sender.executeUnsafe(new SendMessage(chat.getId(), autoPoll.getDetails(data)));
+        } else {
+            sender.executeUnsafe(new SendMessage(chat.getId(), "Нет деталей для опроса."));
         }
     }
 }

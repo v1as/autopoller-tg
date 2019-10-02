@@ -65,7 +65,7 @@ public class AutoPoll extends TgRequestPoll<String> {
         StringBuilder result = new StringBuilder();
         this.userIdToVotes.forEach(
                 (userId, values) -> {
-                    result.append(data.getUserData(userId).getUsernameOrFullName()).append(' ');
+                    result.append(data.getUserData(userId).getUsernameAndFullName()).append(' ');
                     values.forEach(result::append);
                     result.append('\n');
                 });
