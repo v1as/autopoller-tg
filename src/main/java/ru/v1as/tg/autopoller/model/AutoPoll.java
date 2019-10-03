@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import ru.v1as.tg.autopoller.AutoPollBotData;
 import ru.v1as.tg.autopoller.tg.KeyboardUtils;
@@ -17,12 +18,15 @@ import ru.v1as.tg.autopoller.tg.KeyboardUtils;
 @Slf4j
 public class AutoPoll extends TgRequestPoll<String> {
 
+    private Message initialMessage;
     private Map<Integer, Set<String>> userIdToVotes = new LinkedHashMap<>();
     private Set<String> allValues = new LinkedHashSet<>();
 
-    public AutoPoll(AutoPollChatData chatData, Integer userId, String text) {
+    public AutoPoll(
+            AutoPollChatData chatData, Message lastMessage, Integer userId, String firstChoose) {
         super(chatData);
-        vote(userId, text);
+        this.initialMessage = lastMessage;
+        vote(userId, firstChoose);
     }
 
     public void vote(Integer userId, String data) {
@@ -42,10 +46,7 @@ public class AutoPoll extends TgRequestPoll<String> {
         allValues.forEach(v -> result.put(v, 0));
         userIdToVotes.values().stream()
                 .flatMap(Collection::stream)
-                .forEach(
-                        vote -> {
-                            result.put(vote, result.get(vote) + 1);
-                        });
+                .forEach(vote -> result.put(vote, result.get(vote) + 1));
         String[] buttonsData =
                 result.entrySet().stream()
                         .flatMap(this::getButtonDataStream)
@@ -70,5 +71,9 @@ public class AutoPoll extends TgRequestPoll<String> {
                     result.append('\n');
                 });
         return result.toString();
+    }
+
+    Integer getInitialMessageId() {
+        return initialMessage.getMessageId();
     }
 }

@@ -12,7 +12,9 @@ public class AutoPollTest extends AbstractTelegramTest {
 
     @Test
     public void createTest() {
-        AutoPoll autoPoll = new AutoPoll(new AutoPollChatData(getChat()), getUserId(), "+");
+        AutoPoll autoPoll =
+                new AutoPoll(
+                        new AutoPollChatData(getChat()), getMessage(++lastMsgId), getUserId(), "+");
         autoPoll.vote(getUserId(), "+");
         InlineKeyboardButton button = assertButton(autoPoll.getReplyKeyboard());
         assertEquals("+", button.getText());

@@ -5,6 +5,7 @@ import static ru.v1as.tg.autopoller.Const.isReaction;
 import static ru.v1as.tg.autopoller.tg.KeyboardUtils.deleteMsg;
 import static ru.v1as.tg.autopoller.tg.KeyboardUtils.getUpdateButtonsMsg;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -31,8 +32,8 @@ public class PollReplyHandler implements MessageHandler {
             return;
         }
         Integer replyToMsgId =
-                ofNullable(message.getReplyToMessage()).map(Message::getMessageId).orElse(null);
-        AutoPoll poll = chatData.getMsgIdToPoll().get(replyToMsgId);
+            ofNullable(message.getReplyToMessage()).map(Message::getMessageId).orElse(null);
+        AutoPoll poll = chatData.getPoll(replyToMsgId);
         if (poll != null && isReaction(message.getText())) {
             poll.vote(user.getId(), message.getText());
             sender.executeUnsafe(

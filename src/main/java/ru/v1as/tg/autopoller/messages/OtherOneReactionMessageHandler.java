@@ -29,7 +29,7 @@ public class OtherOneReactionMessageHandler implements MessageHandler {
         if (chatData.isUserDisabled(user)) {
             return;
         }
-        Message lastMessage = chatData.getLastMessage();
+        Message lastMessage = chatData.findLastMessage(msg, null);
         String msgTxt = msg.getText();
         Integer replyToMsgId =
                 ofNullable(msg.getReplyToMessage()).map(Message::getMessageId).orElse(null);
@@ -39,7 +39,7 @@ public class OtherOneReactionMessageHandler implements MessageHandler {
                 && Objects.equals(lastMessage.getMessageId(), replyToMsgId)
                 && !Objects.equals(lastMessageUserId, user.getId())
                 && isReaction(msgTxt)) {
-            AutoPoll poll = new AutoPoll(chatData, user.getId(), msgTxt);
+            AutoPoll poll = new AutoPoll(chatData, lastMessage, user.getId(), msgTxt);
             SendMessage sendMsg =
                     new SendMessage()
                             .setText("\uD83D\uDCAD")

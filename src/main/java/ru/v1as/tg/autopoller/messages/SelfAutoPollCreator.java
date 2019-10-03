@@ -1,9 +1,7 @@
 package ru.v1as.tg.autopoller.messages;
 
-import static java.util.Optional.ofNullable;
 import static ru.v1as.tg.autopoller.Const.isReaction;
 
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -28,20 +26,13 @@ public class SelfAutoPollCreator implements MessageHandler {
     public void handle(Message msg, Chat chat, User user) {
         UserData userData = data.getUserData(user);
         AutoPollChatData chatData = data.getChatData(chat.getId());
-        if (chatData.isUserDisabled(user)) {
+        if (chatData.isUserDisabled(user) || msg.getReplyToMessage() == null) {
             return;
         }
-        Message lastMessage = chatData.getLastMessage();
         String msgTxt = msg.getText();
-        Integer lastMessageUserId =
-                ofNullable(lastMessage).map(Message::getFrom).map(User::getId).orElse(null);
-        Integer replyToMsgId =
-                ofNullable(msg.getReplyToMessage()).map(Message::getMessageId).orElse(null);
-        if (lastMessage != null
-                && Objects.equals(lastMessageUserId, user.getId())
-                && Objects.equals(lastMessage.getMessageId(), replyToMsgId)
-                && isReaction(msgTxt)) {
-            AutoPoll poll = new AutoPoll(chatData, user.getId(), msgTxt);
+        Message lastMessage = chatData.findLastMessage(msg.getReplyToMessage(), user.getId());
+        if (lastMessage != null && isReaction(msgTxt)) {
+            AutoPoll poll = new AutoPoll(chatData, lastMessage, user.getId(), msgTxt);
             SendMessage sendMsg =
                     new SendMessage()
                             .setText(
@@ -55,5 +46,4 @@ public class SelfAutoPollCreator implements MessageHandler {
             sender.executeAsyncUnsafe(sendMsg, new RegisterAutoPollCallback(poll, data));
         }
     }
-
 }

@@ -19,7 +19,7 @@ public class LastMessageSetter implements MessageHandler {
     @Override
     public void handle(Message message, Chat chat, User user) {
         AutoPollChatData chatData = data.getChatData(chat.getId());
-        chatData.setLastMessage(message);
+        chatData.addLastMessage(message);
         log.debug("Last message set: {}", message);
     }
 
