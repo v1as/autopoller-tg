@@ -5,7 +5,6 @@ import static ru.v1as.tg.autopoller.Const.isReaction;
 import static ru.v1as.tg.autopoller.tg.KeyboardUtils.deleteMsg;
 import static ru.v1as.tg.autopoller.tg.KeyboardUtils.getUpdateButtonsMsg;
 
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -15,6 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import ru.v1as.tg.autopoller.AutoPollBotData;
 import ru.v1as.tg.autopoller.model.AutoPoll;
 import ru.v1as.tg.autopoller.model.AutoPollChatData;
+import ru.v1as.tg.autopoller.tg.KeyboardUtils;
 import ru.v1as.tg.autopoller.tg.UnsafeAbsSender;
 
 @Slf4j
@@ -32,9 +32,11 @@ public class PollReplyHandler implements MessageHandler {
             return;
         }
         Integer replyToMsgId =
-            ofNullable(message.getReplyToMessage()).map(Message::getMessageId).orElse(null);
+                ofNullable(message.getReplyToMessage()).map(Message::getMessageId).orElse(null);
         AutoPoll poll = chatData.getPoll(replyToMsgId);
-        if (poll != null && isReaction(message.getText())) {
+        if (poll != null
+                && isReaction(message.getText())
+                && poll.getAllValues().size() < KeyboardUtils.LINE_LIMIT * 3) {
             poll.vote(user.getId(), message.getText());
             sender.executeUnsafe(
                     getUpdateButtonsMsg(chat, poll.getVoteMessageId(), poll.getReplyKeyboard()));

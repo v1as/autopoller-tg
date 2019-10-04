@@ -14,6 +14,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 @UtilityClass
 public class KeyboardUtils {
 
+    public static final int LINE_LIMIT = 4;
+
     public static InlineKeyboardMarkup inlineKeyboardMarkup(String... buttonAndData) {
         Asserts.check(buttonAndData.length % 2 == 0, "Arguments amount should be even.");
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
@@ -24,6 +26,10 @@ public class KeyboardUtils {
                     new InlineKeyboardButton()
                             .setText(buttonAndData[2 * i])
                             .setCallbackData(buttonAndData[2 * i + 1]));
+            if(rowInline.size() == LINE_LIMIT) {
+                rowsInline.add(rowInline);
+                rowInline = new ArrayList<>();
+            }
         }
         // Set the keyboard to the markup
         if (!rowInline.isEmpty()) {

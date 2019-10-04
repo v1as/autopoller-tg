@@ -73,7 +73,32 @@ public class AutoPoll extends TgRequestPoll<String> {
         return result.toString();
     }
 
+    public Set<String> getAllValues() {
+        return allValues;
+    }
+
     Integer getInitialMessageId() {
         return initialMessage.getMessageId();
+    }
+
+    @Override
+    public String toString() {
+        return "AutoPoll{"
+                + "initialMessage="
+                + initialMessage
+                + ", userIdToVotes="
+                + userIdToVotes
+                + ", allValues="
+                + allValues
+                + (chat != null ? chat.getChatId() : "")
+                + ", created="
+                + created
+                + ", finished="
+                + finished
+                + ", canceled="
+                + canceled
+                + ", voteMessage="
+                + voteMessage
+                + '}';
     }
 }

@@ -26,6 +26,10 @@ public class AutoPollVoteHandler implements TgCallBackHandler<String> {
         Integer replyToMsgId = callbackQuery.getMessage().getMessageId();
         AutoPoll poll = data.getChatData(chat.getId()).getPoll(replyToMsgId);
         if (poll == null) {
+            sender.executeUnsafe(
+                    new AnswerCallbackQuery()
+                            .setCallbackQueryId(callbackQuery.getId())
+                            .setText("⏰"));
             return;
         }
         sender.executeUnsafe(
