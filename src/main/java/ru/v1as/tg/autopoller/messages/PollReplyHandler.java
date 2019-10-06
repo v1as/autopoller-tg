@@ -14,6 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import ru.v1as.tg.autopoller.AutoPollBotData;
 import ru.v1as.tg.autopoller.model.AutoPoll;
 import ru.v1as.tg.autopoller.model.AutoPollChatData;
+import ru.v1as.tg.autopoller.model.UserData;
 import ru.v1as.tg.autopoller.tg.KeyboardUtils;
 import ru.v1as.tg.autopoller.tg.UnsafeAbsSender;
 
@@ -28,16 +29,22 @@ public class PollReplyHandler implements MessageHandler {
     @Override
     public void handle(Message message, Chat chat, User user) {
         AutoPollChatData chatData = data.getChatData(chat.getId());
+        UserData userData = data.getUserData(user);
         if (chatData.isUserDisabled(user)) {
             return;
         }
         Integer replyToMsgId =
                 ofNullable(message.getReplyToMessage()).map(Message::getMessageId).orElse(null);
         AutoPoll poll = chatData.getPoll(replyToMsgId);
+        String choose = message.getText();
         if (poll != null
-                && isReaction(message.getText())
+                && isReaction(choose)
                 && poll.getAllValues().size() < KeyboardUtils.LINE_LIMIT * 3) {
-            poll.vote(user.getId(), message.getText());
+            log.info(
+                    "User '{}' just extended poll with choose '{}'",
+                    userData.getUsernameOrFullName(),
+                    choose);
+            poll.vote(user.getId(), choose);
             sender.executeUnsafe(
                     getUpdateButtonsMsg(chat, poll.getVoteMessageId(), poll.getReplyKeyboard()));
             sender.executeUnsafe(deleteMsg(chat.getId(), message));

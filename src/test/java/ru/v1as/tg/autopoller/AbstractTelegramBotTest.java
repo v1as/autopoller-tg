@@ -24,7 +24,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
-public class AbstractGameBotTest extends AbstractTelegramTest {
+public class AbstractTelegramBotTest extends AbstractTelegramTest {
 
     @Autowired protected TestAbsSender sender;
     @Autowired protected AbstractTgBot bot;

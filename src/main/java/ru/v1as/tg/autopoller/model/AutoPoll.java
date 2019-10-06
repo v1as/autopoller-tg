@@ -23,14 +23,14 @@ public class AutoPoll extends TgRequestPoll<String> {
     private Set<String> allValues = new LinkedHashSet<>();
 
     public AutoPoll(
-            AutoPollChatData chatData, Message lastMessage, Integer userId, String firstChoose) {
+            AutoPollChatData chatData, Message initialMessage, Integer userId, String firstChoose) {
         super(chatData);
-        this.initialMessage = lastMessage;
+        this.initialMessage = initialMessage;
         vote(userId, firstChoose);
     }
 
     public void vote(Integer userId, String data) {
-        log.info("User {} voted {}", userId, data);
+        log.debug("User {} voted {}", userId, data);
         Set<String> userVotes =
                 this.userIdToVotes.computeIfAbsent(userId, (id) -> new LinkedHashSet<>());
         allValues.add(data);

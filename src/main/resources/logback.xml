@@ -13,7 +13,7 @@
     </encoder>
   </appender>
 
-  <logger name="ru.v1as.tg.autopoller" level="DEBUG" />
+  <logger name="ru.v1as.tg.autopoller" level="INFO" />
 
   <root level="INFO">
     <appender-ref ref="STDOUT" />

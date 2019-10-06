@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 public class Const {
 
+    public static final String THOUGHT_BALLOON_EMOJI = "\uD83D\uDCAD";
+
     private static final Set<String> EMOJIS =
             EmojiManager.getAll().stream().map(Emoji::getUnicode).collect(Collectors.toSet());
     private static final Set<String> ALLOWED_REPLY = ImmutableSet.of("+", "-", "~");
@@ -17,6 +19,6 @@ public class Const {
     }
 
     private static boolean isEmojiAlpha(String text) {
-        return text.length() < 5 && text.chars().allMatch(c -> c > 1000);
+        return text.length() < 5 && text.chars().allMatch(c -> c > 1120);
     }
 }

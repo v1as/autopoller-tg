@@ -3,6 +3,7 @@ package ru.v1as.tg.autopoller.messages;
 import static ru.v1as.tg.autopoller.Const.isReaction;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
@@ -15,6 +16,7 @@ import ru.v1as.tg.autopoller.model.AutoPollChatData;
 import ru.v1as.tg.autopoller.model.UserData;
 import ru.v1as.tg.autopoller.tg.UnsafeAbsSender;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class SelfAutoPollCreator implements MessageHandler {
@@ -29,10 +31,15 @@ public class SelfAutoPollCreator implements MessageHandler {
         if (chatData.isUserDisabled(user) || msg.getReplyToMessage() == null) {
             return;
         }
-        String msgTxt = msg.getText();
+        String firstChoise = msg.getText();
         Message lastMessage = chatData.findLastMessage(msg.getReplyToMessage(), user.getId());
-        if (lastMessage != null && isReaction(msgTxt)) {
-            AutoPoll poll = new AutoPoll(chatData, lastMessage, user.getId(), msgTxt);
+        if (lastMessage != null && isReaction(firstChoise)) {
+            log.info(
+                    "User '{}' just created self-poll with text '{}' and reaction '{}'",
+                    userData.getUsernameOrFullName(),
+                    lastMessage.getText(),
+                    firstChoise);
+            AutoPoll poll = new AutoPoll(chatData, lastMessage, user.getId(), firstChoise);
             SendMessage sendMsg =
                     new SendMessage()
                             .setText(
